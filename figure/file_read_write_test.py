@@ -25,26 +25,26 @@ print(xticks)
 
 fig, ax = plt.subplots(figsize=(10, 7))
 # 所有门店第一种产品的销量，注意控制柱子的宽度，这里选择0.25
-ax.plot(users, upload_time, color='green', marker='o', linewidth=1.5, label="file upload")#DE6B58
+ax.plot(users, upload_time, color='green', marker='o', linewidth=1.5, label="File Upload")#DE6B58
 
-ax.plot(users, download_time, color='#DE6B58', marker='o', linewidth=2, label="file download")
+ax.plot(users, download_time, color='#DE6B58', marker='o', linewidth=2, label="File Download")
 
 # 文件上传显示数值
 for a, b in zip(users, upload_time):
     if a < 100:
         continue
-    ax.text(a, b, '%.3f'%b, ha='center', va= 'bottom',fontsize=10) 
+    ax.text(a, b, '%.3f'%b, ha='center', va= 'bottom',fontsize=12) 
  # 文件下载显示数值
  
 for a, b in zip(users, download_time):
     if a < 100:
         continue
-    ax.text(a, b, '%.3f'%b, ha='center', va= 'bottom',fontsize=10) 
+    ax.text(a, b, '%.3f'%b, ha='center', va= 'bottom',fontsize=12) 
 
 
-ax.set_title("SFShare File Upload And Download Time", fontsize=15)
-ax.set_xlabel("The size of file(MB)")
-ax.set_ylabel("Elapsed time(sec)")
+ax.set_title("BFShare's File Upload and Download Time", fontsize=15)
+ax.set_xlabel("The Size of File(MB)", fontsize=12)
+ax.set_ylabel("Elapsed Time(sec)", fontsize=12)
 ax.legend()
 
 # 最后调整x轴标签的位置

@@ -38,8 +38,8 @@ ax.bar(xticks + 0.5, AES256, width=0.25, label="AES-256", color="red")
 #     ax.text(a+0.5, b+1, '%.0f'%b, ha='center', va= 'bottom',fontsize=10) 
 
 ax.set_title("AES Decryption Time", fontsize=15)
-ax.set_xlabel("The size of file(MB)")
-ax.set_ylabel("Elapsed time(sec)")
+ax.set_xlabel("The Size of File(MB)", fontsize=12)
+ax.set_ylabel("Elapsed Time(sec)", fontsize=12)
 ax.legend()
 
 # 最后调整x轴标签的位置

@@ -22,21 +22,21 @@ xticks = np.arange(len(users))
 
 fig, ax = plt.subplots(figsize=(10, 7))
 # 所有门店第一种产品的销量，注意控制柱子的宽度，这里选择0.25
-ax.plot(xticks, all_block,  color='green', marker='x', linewidth=2, label="Share 10 files")
+ax.plot(xticks, all_block,  color='green', marker='x', linewidth=2, label="Share 10 Files")
 
-ax.plot(xticks, all_block2,  color='#DE6B58', marker='x', linewidth=2, label="Share 50 files")
+ax.plot(xticks, all_block2,  color='#DE6B58', marker='x', linewidth=2, label="Share 50 Files")
 
 # 显示数值
 for a, b in zip(xticks, all_block):
-    ax.text(a, b+1, '%.0f'%b, ha='center', va= 'bottom',fontsize=10) 
+    ax.text(a, b+1, '%.0f'%b, ha='center', va= 'bottom',fontsize=12) 
 # 显示数值
 for a, b in zip(xticks, all_block2):
-    ax.text(a, b+1, '%.0f'%b, ha='center', va= 'bottom',fontsize=10)
+    ax.text(a, b+1, '%.0f'%b, ha='center', va= 'bottom', fontsize=12)
 
 
-ax.set_title("Blocks Of Share Files", fontsize=15)
-ax.set_xlabel("The number of user")
-ax.set_ylabel("The number of block")
+ax.set_title("Blocks Generated of Share Files", fontsize=15)
+ax.set_xlabel("The Number of User", fontsize=12)
+ax.set_ylabel("The Number of Block", fontsize=12)
 ax.legend()
 
 # 最后调整x轴标签的位置
