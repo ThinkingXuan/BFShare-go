@@ -6,7 +6,9 @@ import (
 	"BFShare-go/internal/fabric/fabservice"
 	"BFShare-go/internal/fabric/sdkInit"
 	"BFShare-go/internal/file"
+	"BFShare-go/internal/tools"
 	"crypto/ecdsa"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,10 +18,21 @@ import (
 )
 
 type ReKey struct {
-	Fdenc   []byte          `json:"fdenc"`
-	Rk      big.Int         `json:"rk"`
-	XA      ecdsa.PublicKey `json:"xa"`
-	Capsule recrypt.Capsule `json:"capsule"`
+	Fdenc   []byte           `json:"fdenc"`
+	Rk      *big.Int         `json:"rk"`
+	XA      *ecdsa.PublicKey `json:"xa"`
+	Capsule *recrypt.Capsule `json:"capsule"`
+}
+
+type RekeySerialize struct {
+	Fdenc           string `json:"fdenc"`
+	Rk              string `json:"rk"`
+	RkSign          string `json:"rk_sign"`
+	XA              string `json:"xa"`
+	CapsuleE        string `json:"capsule_e"`
+	CapsuleV        string `json:"capsule_v"`
+	CapsuleBint     string `json:"capsule_bint"`
+	CapsuleBintSign string `json:"capsule_bint_sign"`
 }
 
 // shareCmd represents the share command
@@ -34,7 +47,7 @@ var shareCmd = &cobra.Command{
 			return
 		}
 
-		err = judgeFile(fileID)
+		err = judgeFile(shareFileID)
 		if err != nil {
 			log.Println(err)
 			return
@@ -73,11 +86,6 @@ func judgeAddress(address string) error {
 	// address  correct
 	if len(address) != 34 {
 		return errors.New("address error, the length of correct address is 34")
-	}
-
-	// address exist
-	if !addressExist(address) {
-		return errors.New("address not exist")
 	}
 
 	return nil
@@ -144,7 +152,6 @@ func shareFile(address, fileID string) bool {
 		log.Println("get aes encrypt key failure,", err)
 		return false
 	}
-
 	// pre process
 
 	// alice
@@ -167,13 +174,37 @@ func shareFile(address, fileID string) bool {
 		fmt.Println(err)
 	}
 
+	// 原始rekey
 	rekey := ReKey{
 		Fdenc:   fdenc,
-		Rk:      *rk,
-		XA:      *pubX,
-		Capsule: *capsule,
+		Rk:      rk,
+		XA:      pubX,
+		Capsule: capsule,
 	}
-	rekeyByte, err := json.Marshal(rekey)
+
+	xa, err1 := x509.MarshalPKIXPublicKey(rekey.XA)
+	ce, err2 := x509.MarshalPKIXPublicKey(rekey.Capsule.E)
+	cv, err3 := x509.MarshalPKIXPublicKey(rekey.Capsule.V)
+	if err1 != nil || err2 != nil || err3 != nil {
+		fmt.Println(err1, err2, err3)
+	}
+
+	// 需要序列化传输的rekey
+	rekeySerialize := RekeySerialize{
+		Fdenc:           tools.ByteToString(rekey.Fdenc),
+		Rk:              tools.ByteToString(rekey.Rk.Bytes()),
+		RkSign:          fmt.Sprintf("%d", rekey.Rk.Sign()),
+		XA:              tools.ByteToString(xa),
+		CapsuleE:        tools.ByteToString(ce),
+		CapsuleV:        tools.ByteToString(cv),
+		CapsuleBint:     tools.ByteToString(rekey.Capsule.S.Bytes()),
+		CapsuleBintSign: fmt.Sprintf("%d", rekey.Capsule.S.Sign()),
+	}
+
+	rekeyByte, err := json.Marshal(rekeySerialize)
+	if err != nil {
+		fmt.Println("rekeybyte Marshal: " + err.Error())
+	}
 
 	_, err = service.InsertShareAddressFile(address, fileID, rekeyByte)
 	if err != nil {
